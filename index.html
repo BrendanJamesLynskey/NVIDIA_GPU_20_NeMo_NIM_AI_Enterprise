@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NVIDIA GPU 20 — NeMo, NIM &amp; AI Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-card: #0d1117;
+            --bg-code: #161b22;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent: #76B900;
+            --accent-dim: #76B90044;
+            --accent-glow: #76B90033;
+            --border: #21262d;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --font-body: 'Inter', sans-serif;
+            --max-width: 900px;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 17px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ── Header ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .series-label {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 .accent {
+            color: var(--accent);
+        }
+
+        .hero .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        /* ── Tag Pills ── */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+            white-space: nowrap;
+        }
+
+        /* ── Pipeline Flow Bar ── */
+        .pipeline {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+            max-width: var(--max-width);
+        }
+
+        .pipeline-step {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 0.3rem 0.7rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .pipeline-arrow {
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        /* ── Slides ── */
+        .slide {
+            min-height: 100vh;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-number {
+            font-family: var(--font-display);
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--accent-dim);
+            position: absolute;
+            top: 2rem;
+            right: 1.5rem;
+            line-height: 1;
+            user-select: none;
+        }
+
+        .slide h2 {
+            font-family: var(--font-display);
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            line-height: 1.25;
+        }
+
+        .slide h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .slide p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .slide p strong {
+            color: var(--text-primary);
+        }
+
+        .slide ul, .slide ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .slide li {
+            margin-bottom: 0.4rem;
+        }
+
+        .slide li strong {
+            color: var(--text-primary);
+        }
+
+        /* ── Code Blocks ── */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            background: rgba(118, 185, 0, 0.08);
+            padding: 0.4rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #c9d1d9;
+        }
+
+        /* Syntax highlighting (manual) */
+        .kw { color: #ff7b72; }
+        .fn { color: #d2a8ff; }
+        .str { color: #a5d6ff; }
+        .cm { color: #8b949e; font-style: italic; }
+        .num { color: #79c0ff; }
+        .type { color: #ffa657; }
+        .dir { color: #ff7b72; }
+        .mac { color: #ffa657; }
+
+        /* ── Tables ── */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1.25rem 0;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--bg-code);
+            color: var(--accent);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-display);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) td {
+            background: rgba(13, 17, 23, 0.5);
+        }
+
+        /* ── Diagrams ── */
+        .diagram-flow {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-box {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .diagram-box.accent {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(118, 185, 0, 0.08);
+        }
+
+        .diagram-box.dim {
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+
+        .diagram-arrow {
+            color: var(--accent);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        /* Vertical flow diagrams */
+        .diagram-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-vertical .diagram-arrow {
+            font-size: 1.1rem;
+        }
+
+        /* Nested hierarchy diagram */
+        .hierarchy {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .hierarchy-level {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hierarchy-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .hierarchy-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .hierarchy-item {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .hierarchy-item.accent {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(118, 185, 0, 0.08);
+        }
+
+        /* Grid diagram */
+        .diagram-grid {
+            display: grid;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-grid.cols-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .diagram-grid.cols-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .diagram-panel {
+            padding: 1rem;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .diagram-panel.accent-border {
+            border-left: 3px solid var(--accent);
+        }
+
+        .diagram-panel h4 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .diagram-panel p, .diagram-panel ul {
+            font-size: 0.85rem;
+        }
+
+        /* ── Callout Boxes ── */
+        .callout {
+            background: var(--bg-card);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        .callout p {
+            margin-bottom: 0;
+        }
+
+        .callout .callout-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.3rem;
+        }
+
+        /* ── Tier Visual ── */
+        .tier-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .tier-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .tier-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 90px;
+            text-align: right;
+        }
+
+        .tier-fill {
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            white-space: nowrap;
+            transition: width 0.6s ease;
+        }
+
+        .tier-cost {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            min-width: 70px;
+        }
+
+        /* ── Contents list ── */
+        .contents-list {
+            list-style: none;
+            padding-left: 0;
+            counter-reset: contents;
+        }
+
+        .contents-list li {
+            counter-increment: contents;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contents-list li:last-child {
+            border-bottom: none;
+        }
+
+        .contents-list li::before {
+            content: counter(contents, decimal-leading-zero);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            min-width: 2rem;
+        }
+
+        .contents-list a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .contents-list a:hover {
+            color: var(--accent);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .slide {
+                padding: 3rem 1rem;
+                min-height: auto;
+            }
+
+            .slide-number {
+                font-size: 3rem;
+                top: 1.5rem;
+                right: 1rem;
+            }
+
+            .slide h2 {
+                font-size: 1.5rem;
+            }
+
+            .diagram-grid.cols-2,
+            .diagram-grid.cols-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .pipeline {
+                gap: 0.15rem;
+            }
+
+            .pipeline-step {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.4rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            table {
+                font-size: 0.78rem;
+            }
+
+            .tier-label {
+                min-width: 60px;
+                font-size: 0.65rem;
+            }
+
+            .tier-fill {
+                font-size: 0.6rem;
+                height: 26px;
+            }
+        }
+
+        /* ── Interactive controls (added for Local LLM series) ── */
+        .control-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+        }
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .control-row label {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            min-width: 180px;
+        }
+        .control-row input[type="range"] {
+            flex: 1;
+            min-width: 160px;
+            accent-color: var(--accent);
+        }
+        .control-row input[type="number"],
+        .control-row select {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 4px;
+            padding: 0.3rem 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+        .control-row .val {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            min-width: 80px;
+            text-align: right;
+        }
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            padding: 0.4rem 0.9rem;
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .btn:hover { background: rgba(118, 185, 0, 0.2); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn.secondary {
+            background: var(--bg-code);
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+        .result-box {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin-top: 0.75rem;
+        }
+        .result-box .line-label { color: var(--text-secondary); }
+        .result-box .line-val   { color: var(--accent); font-weight: 600; }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .metric {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.6rem 0.8rem;
+            text-align: center;
+        }
+        .metric .metric-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .metric .metric-value {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-top: 0.2rem;
+        }
+
+        /* Canvas / SVG containers */
+        .canvas-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+        }
+        .canvas-wrap canvas,
+        .canvas-wrap svg {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+
+        /* Small inline badge */
+        .badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            padding: 0.1rem 0.45rem;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            vertical-align: middle;
+            margin-left: 0.3rem;
+        }
+        .badge.ok    { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+        .badge.warn  { border-color: #ffa657; color: #ffa657; background: rgba(255,166,87,0.08); }
+        .badge.bad   { border-color: #ff7b72; color: #ff7b72; background: rgba(255,123,114,0.08); }
+
+    </style>
+</head>
+<body>
+
+<header class="hero">
+    <div class="series-label">NVIDIA GPU Architectures Series — Presentation 20</div>
+    <h1><span class="accent">NeMo, NIM &amp; AI Enterprise</span> &mdash; NVIDIA's Production AI Stack</h1>
+    <p class="subtitle">NVIDIA's full-stack answer to "how do I actually train and serve enterprise AI?": NeMo Framework for pretraining and fine-tuning, NeMo Aligner for RLHF and DPO, NIM microservices for one-line model deployment, Base Command for cluster control, and the AI Enterprise commercial bundle that ties it all together.</p>
+
+    <div class="tags">
+        <span class="tag">NeMo</span><span class="tag">NeMo Megatron</span>
+        <span class="tag">NeMo Aligner</span><span class="tag">NIM</span>
+        <span class="tag">Base Command</span><span class="tag">AI Enterprise</span>
+        <span class="tag">NGC</span><span class="tag">Guardrails</span>
+        <span class="tag">Triton</span><span class="tag">NeMo Curator</span>
+    </div>
+
+    <div class="pipeline">
+        <span class="pipeline-step">Curate</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Pretrain</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Fine-tune</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Align</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Quantize</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">NIM</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Serve</span>
+    </div>
+</header>
+
+<section class="slide" id="slide-00">
+    <div class="slide-number">00</div>
+    <h2>Topics We'll Cover</h2>
+    <p>The NVIDIA AI Enterprise bundle is six products glued together with a commercial wrapper. We work top-to-bottom: data prep, training, alignment, deployment, governance, scheduling.</p>
+    <ul class="contents-list">
+        <li><a href="#slide-01">The AI Enterprise Bundle in One Page</a></li>
+        <li><a href="#slide-02">NeMo Curator &mdash; Data Pipeline at Scale</a></li>
+        <li><a href="#slide-03">NeMo Framework &mdash; Pretraining</a></li>
+        <li><a href="#slide-04">Parallelism Strategies in NeMo</a></li>
+        <li><a href="#slide-05">NeMo Aligner &mdash; RLHF, DPO, PPO</a></li>
+        <li><a href="#slide-06">NIM &mdash; One-Line Model Deployment</a></li>
+        <li><a href="#slide-07">NIM Catalog &mdash; Beyond LLMs</a></li>
+        <li><a href="#slide-08">NeMo Guardrails &mdash; Safety on Rails</a></li>
+        <li><a href="#slide-09">Base Command &mdash; Cluster Orchestration</a></li>
+        <li><a href="#slide-10">NGC, AI Enterprise, DGX Cloud &mdash; How These Connect</a></li>
+        <li><a href="#slide-11">Interactive: NVIDIA AI Stack Builder</a></li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-01">
+    <div class="slide-number">01</div>
+    <h2>The AI Enterprise Bundle in One Page</h2>
+    <p>NVIDIA AI Enterprise is a single licensed bundle that wraps six distinct products. Each is independently useful; together they cover the full lifecycle from raw web data to a production endpoint.</p>
+
+    <div class="diagram-grid cols-3">
+        <div class="diagram-panel accent-border">
+            <h4>NeMo Framework</h4>
+            <p><strong>Training.</strong> PyTorch-Lightning + Hydra wrapper around Megatron-LM. Pretrain or fine-tune GPT, Llama, Mistral, Mixtral, Nemotron at any scale from 300 M to 1 T params.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>NeMo Aligner</h4>
+            <p><strong>RLHF / DPO / PPO.</strong> Post-training alignment toolbox &mdash; SFT, reward-model training, PPO, DPO, RLOO, KTO, IPO, SteerLM. Used to align Nemotron-70B.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>NeMo Curator</h4>
+            <p><strong>Data prep at scale.</strong> Distributed crawl, language ID, exact + fuzzy dedup, quality scoring, PII redaction, classifier filtering, blending. Trillion-token-scale.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>NeMo Guardrails</h4>
+            <p><strong>Safety filtering.</strong> Open-source library plus a packaged NIM. Colang DSL for input / dialog / execution / output rails. Integrates with any LLM endpoint.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>NIM microservices</h4>
+            <p><strong>Packaged inference.</strong> Containerised, OpenAI-compatible endpoints with TensorRT-LLM engines, Triton, Prometheus metrics and autoscaling probes built-in.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Base Command</h4>
+            <p><strong>Cluster orchestration.</strong> Web UI + CLI for queueing, multi-tenant fair-share, dataset registry, MIG-aware scheduling. Sits above Slurm and Kubernetes.</p>
+        </div>
+    </div>
+
+    <h3>The commercial wrapper</h3>
+    <p>All six are commercially supported under the <strong>NVIDIA AI Enterprise</strong> licence (~$4,500 / GPU / yr list, frequently discounted via OEM resellers). The licence buys: validated container builds in NGC, security patches against the driver and CUDA matrix, a Day-0 support SLA, and certified compatibility with the underlying RHEL / Ubuntu / VMware host stacks.</p>
+
+    <div class="callout">
+        <div class="callout-label">The pitch in one sentence</div>
+        <p>"You can already <code>pip install nemo</code> and <code>docker pull nim</code> &mdash; AI Enterprise is what you buy when your CIO needs a phone number, a CVE feed, and a vendor to point at when something breaks at 2 AM."</p>
+    </div>
+
+    <h3>Where each piece fits in the lifecycle</h3>
+    <div class="diagram-flow">
+        <span class="diagram-box dim">Raw Web</span>
+        <span class="diagram-arrow">&rarr;</span>
+        <span class="diagram-box accent">Curator</span>
+        <span class="diagram-arrow">&rarr;</span>
+        <span class="diagram-box accent">NeMo Framework</span>
+        <span class="diagram-arrow">&rarr;</span>
+        <span class="diagram-box accent">Aligner</span>
+        <span class="diagram-arrow">&rarr;</span>
+        <span class="diagram-box accent">TRT-LLM</span>
+        <span class="diagram-arrow">&rarr;</span>
+        <span class="diagram-box accent">NIM</span>
+        <span class="diagram-arrow">&rarr;</span>
+        <span class="diagram-box dim">App</span>
+    </div>
+</section>
+
+<section class="slide" id="slide-02">
+    <div class="slide-number">02</div>
+    <h2>NeMo Curator &mdash; Data Pipeline at Scale</h2>
+    <p>Pretraining a frontier model means moving on the order of <strong>10&ndash;15 trillion tokens</strong> &mdash; the equivalent of every book ever written, dozens of times over. Curator is the GPU-accelerated pipeline that turns Common Crawl WARC files into clean, deduplicated, blended pretraining shards.</p>
+
+    <h3>Pipeline stages</h3>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>1. Web crawl loaders</h4>
+            <p>Common Crawl WARC, ArXiv, Stack Exchange, Wikipedia, GitHub. Streaming readers that turn shards into PyArrow / cuDF dataframes without materialising everything in RAM.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>2. Language ID</h4>
+            <p>FastText classifier; runs on CPU but is one of the bottlenecks at scale. Drops everything that isn't on the configured allow-list (typically English + a target list of 30+ languages).</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>3. Exact dedup</h4>
+            <p>Document-level hash (xxhash on normalised text). Drops verbatim duplicates &mdash; the same blog post mirrored across 200 hosts. Cuts ~30% of Common Crawl in one pass.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>4. Fuzzy dedup (MinHash / LSH)</h4>
+            <p>MinHash signatures over n-gram shingles bucketed via locality-sensitive hashing. Catches near-duplicates &mdash; same article with a different ad header. The single biggest contributor to dataset quality.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>5. Quality scoring</h4>
+            <p>Heuristics (mean line length, ratio of alphanumerics, fraction of stop-words) plus a small classifier trained against a curated good/bad split. Filter the bottom 30%.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>6. PII redaction</h4>
+            <p>Regex + NER classifier for emails, phone numbers, credit cards, SSNs. Replaced with placeholder tokens. Mandatory for enterprise corpora subject to GDPR / CCPA.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>7. Classifier-based filtering</h4>
+            <p>Domain classifiers (toxicity, code-vs-prose, technical-vs-spam). Run as Triton-served NIMs. The compute-heavy step &mdash; this is where the GPUs earn their keep.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>8. Blending</h4>
+            <p>Weighted sampling across sources (e.g. 50% Common Crawl, 15% code, 10% books, 25% curated). Output written as MMapped IndexedDataset shards directly consumable by Megatron.</p>
+        </div>
+    </div>
+
+    <h3>Execution model</h3>
+    <p>Curator runs on top of <strong>Dask</strong> + <strong>Ray</strong>, with cuDF accelerating the dataframe stages. The MinHash + LSH stage and the classifier-inference stage are the two GPU-bound bottlenecks; everything else is CPU-cheap. On a 64-node DGX cluster, processing one Common Crawl snapshot (~3 PB compressed) takes <em>days, not weeks</em>.</p>
+
+    <div class="code-block">
+        <div class="code-header">curator_pipeline.py &mdash; CC WARC to cleaned shards</div>
+        <pre><code><span class="kw">import</span> nemo_curator <span class="kw">as</span> nc
+<span class="kw">from</span> nemo_curator <span class="kw">import</span> Sequential, Modify, Filter
+<span class="kw">from</span> nemo_curator.modules <span class="kw">import</span> ExactDuplicates, FuzzyDuplicates
+<span class="kw">from</span> nemo_curator.filters <span class="kw">import</span> FastTextLangId, RepeatingTopNGramsFilter
+
+<span class="cm"># 1. Load Common Crawl WARC shards into a distributed cuDF dataset</span>
+ds = nc.<span class="fn">read_warc</span>(<span class="str">"s3://commoncrawl/cc-2026-04/segments/*/*.warc.gz"</span>)
+
+<span class="cm"># 2. Build a stages pipeline (Dask graph; nothing executes yet)</span>
+pipeline = <span class="fn">Sequential</span>([
+    <span class="fn">Modify</span>(nc.<span class="fn">UnicodeReformatter</span>()),
+    <span class="fn">Filter</span>(<span class="fn">FastTextLangId</span>(model=<span class="str">"lid.176.bin"</span>, lang=<span class="str">"en"</span>)),
+    <span class="fn">Filter</span>(<span class="fn">RepeatingTopNGramsFilter</span>(n=<span class="num">10</span>, max_repetition=<span class="num">0.18</span>)),
+    <span class="fn">ExactDuplicates</span>(id_field=<span class="str">"id"</span>, text_field=<span class="str">"text"</span>),
+    <span class="fn">FuzzyDuplicates</span>(num_hashes=<span class="num">260</span>, num_buckets=<span class="num">20</span>, jaccard_threshold=<span class="num">0.8</span>),
+    <span class="fn">Modify</span>(nc.<span class="fn">PiiRedactor</span>(supported_entities=[<span class="str">"EMAIL"</span>, <span class="str">"PHONE"</span>, <span class="str">"SSN"</span>])),
+    <span class="fn">Filter</span>(nc.<span class="fn">QualityClassifier</span>(model=<span class="str">"nvidia/quality-classifier-deberta"</span>)),
+])
+
+<span class="cm"># 3. Run distributed across 64 GPUs via Dask</span>
+client = nc.<span class="fn">get_client</span>(scheduler=<span class="str">"slurm"</span>, n_workers=<span class="num">64</span>)
+clean = pipeline(ds)
+clean.<span class="fn">to_indexed_dataset</span>(<span class="str">"/lustre/pretraining/cc_clean_v3"</span>, shard_size=<span class="str">"4GB"</span>)
+</code></pre>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">Why GPU-accelerated</div>
+        <p>FastText LangID is fast on CPU but the classifier-filter stage (DeBERTa quality / toxicity heads) is unavoidable Transformer inference. Without GPUs that single stage dominates wall-time by 50&times;. Curator's design exists because Common Crawl <em>cannot</em> be processed on CPU clusters in any reasonable budget.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-03">
+    <div class="slide-number">03</div>
+    <h2>NeMo Framework &mdash; Pretraining</h2>
+    <p>NeMo Framework is the training half of the bundle. Internally it is <strong>Megatron-LM</strong> &mdash; the parallelism engine that NVIDIA pioneered &mdash; wrapped in PyTorch Lightning for the trainer loop and Hydra for configuration. Megatron and NeMo were two separate projects until 2024, when Megatron-Core was upstreamed and NeMo became the canonical entry point.</p>
+
+    <h3>What Megatron pioneered</h3>
+    <ul>
+        <li><strong>Tensor parallelism (TP)</strong> &mdash; splitting individual layer matmuls column-wise across GPUs (Megatron-LM, Shoeybi et al. 2019).</li>
+        <li><strong>Pipeline parallelism (PP)</strong> with interleaved 1F1B scheduling (PipeDream, then PipeDream-Flush).</li>
+        <li><strong>Sequence parallelism (SP)</strong> &mdash; splitting the dropout / layernorm activations along the sequence axis to claw back activation memory.</li>
+        <li><strong>Selective recomputation</strong> &mdash; recompute only the cheap activations, keep the expensive ones.</li>
+    </ul>
+    <p>NeMo composes all of these via Hydra YAML, with sensible defaults per model class.</p>
+
+    <h3>Models supported out-of-the-box</h3>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Family</th><th>Sizes</th><th>Variants</th><th>Notes</th></tr></thead>
+            <tbody>
+                <tr><td><strong>GPT</strong></td><td>300 M &ndash; 1 T</td><td>Decoder-only causal</td><td>The reference recipe; everything else is a delta from this.</td></tr>
+                <tr><td><strong>Llama</strong></td><td>1 B &ndash; 405 B</td><td>Llama-2, Llama-3.x, code-Llama</td><td>RoPE, SwiGLU, GQA preset.</td></tr>
+                <tr><td><strong>Mistral</strong></td><td>7 B</td><td>Sliding-window attention</td><td>Drop-in via Llama recipe + window flag.</td></tr>
+                <tr><td><strong>Mixtral (MoE)</strong></td><td>8&times;7 B, 8&times;22 B</td><td>Sparse MoE</td><td>Needs Expert Parallel; routing-aware loss.</td></tr>
+                <tr><td><strong>Falcon</strong></td><td>7 B &ndash; 180 B</td><td>Multi-query attention</td><td>TII-trained reference.</td></tr>
+                <tr><td><strong>Phi</strong></td><td>1.5 B &ndash; 3.8 B</td><td>Microsoft small models</td><td>Distillation-friendly; runs in NeMo with the GPT recipe.</td></tr>
+                <tr><td><strong>Gemma</strong></td><td>2 B / 7 B</td><td>Google open</td><td>Different RMSNorm constants.</td></tr>
+                <tr><td><strong>Nemotron</strong></td><td>340 B / 70 B / 4 B</td><td>NVIDIA's own</td><td>The reference release that exercises the full Aligner stack.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>A pretrain config in 30 lines</h3>
+    <div class="code-block">
+        <div class="code-header">conf/llama3_70b_pretrain.yaml</div>
+        <pre><code><span class="kw">defaults</span>:
+  - _self_
+  - optim: distributed_fused_adam
+  - data: blended_v3
+
+<span class="kw">name</span>: llama3_70b
+<span class="kw">trainer</span>:
+  devices: <span class="num">8</span>
+  num_nodes: <span class="num">64</span>            <span class="cm"># 512 H100s</span>
+  max_steps: <span class="num">280000</span>
+  precision: bf16-mixed
+  gradient_clip_val: <span class="num">1.0</span>
+
+<span class="kw">model</span>:
+  num_layers: <span class="num">80</span>
+  hidden_size: <span class="num">8192</span>
+  num_attention_heads: <span class="num">64</span>
+  num_query_groups: <span class="num">8</span>      <span class="cm"># GQA</span>
+  ffn_hidden_size: <span class="num">28672</span>
+  position_embedding_type: rope
+  activation: fast-swiglu
+  normalization: rmsnorm
+  seq_length: <span class="num">8192</span>
+  global_batch_size: <span class="num">2048</span>
+  micro_batch_size: <span class="num">1</span>
+  <span class="cm"># --- parallelism ---</span>
+  tensor_model_parallel_size: <span class="num">8</span>
+  pipeline_model_parallel_size: <span class="num">4</span>
+  context_parallel_size: <span class="num">1</span>
+  sequence_parallel: <span class="kw">true</span>
+  <span class="cm"># --- optim &amp; checkpointing ---</span>
+  fp8: <span class="kw">true</span>
+  fp8_format: hybrid           <span class="cm"># E4M3 fwd, E5M2 bwd</span>
+  activations_checkpoint_granularity: selective
+</code></pre>
+    </div>
+    <p>Launch this as <code>python megatron_gpt_pretraining.py --config-path conf --config-name llama3_70b_pretrain</code> via <strong>Slurm</strong> on a DGX SuperPOD or via <strong>Base Command</strong> jobs on managed clusters.</p>
+</section>
+
+<section class="slide" id="slide-04">
+    <div class="slide-number">04</div>
+    <h2>Parallelism Strategies in NeMo</h2>
+    <p>Modern frontier training is never a single dimension of parallelism. NeMo composes six axes; the right combination depends on model shape, GPU count, and interconnect.</p>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>TP &mdash; Tensor Parallel</h4>
+            <p>Split each linear layer's weight matrix column-wise across GPUs; gather via NCCL <code>all-reduce</code> after every layer. <em>NVSwitch-bound:</em> works inside a single NVLink domain but falls off a cliff over PCIe. Typical: TP = 8 inside a DGX node.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>PP &mdash; Pipeline Parallel</h4>
+            <p>Split <em>layers</em> across GPUs. Only hidden states cross between stages, so the per-step traffic is tiny &mdash; PCIe-friendly and cross-node-friendly. Tradeoff: a "bubble" of idle time at start/end of each microbatch. NeMo uses interleaved 1F1B to shrink it.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>SP &mdash; Sequence Parallel</h4>
+            <p>Inside the dropout / layer-norm regions, split activations along the <em>sequence</em> dimension across the TP group. Doesn't add comms (same all-reduce) but recovers ~30% of activation memory. Always-on for TP &gt; 1.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>DP &mdash; Data Parallel</h4>
+            <p>Different batches per group of GPUs. ZeRO-style optimiser-state sharding (Megatron's "distributed-optim") shards the AdamW state along DP for free memory savings. Combine: outer-DP, inner-(TP&times;PP).</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>EP &mdash; Expert Parallel</h4>
+            <p>For MoE models (Mixtral, Nemotron-MoE, DeepSeek-style). Each expert lives on a different GPU; routing is an all-to-all. Communicates only the activated tokens, so cost scales with the number of routed tokens, not the parameter count.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>CP &mdash; Context Parallel</h4>
+            <p>Split very long sequences along the sequence axis <em>across</em> attention heads, with ring-attention reducing the KV across the CP group. Required for 1 M+ context training. Added to NeMo with the long-context push of 2024&ndash;25.</p>
+        </div>
+    </div>
+
+    <h3>A composed example</h3>
+    <p>A 70 B Llama-3 pretrain on 512 H100s typically runs:</p>
+    <ul>
+        <li><strong>TP = 8</strong> (one DGX node, NVSwitch).</li>
+        <li><strong>PP = 4</strong> (across 4 nodes, InfiniBand).</li>
+        <li><strong>DP = 16</strong> (16 replicas of the 32-GPU TP&times;PP block).</li>
+        <li><strong>SP = on</strong>, <strong>CP = 1</strong>, <strong>EP = 1</strong>.</li>
+    </ul>
+    <p>Total GPUs = TP &times; PP &times; DP = 8 &times; 4 &times; 16 = 512. Add CP for &gt; 32 K context, EP for MoE.</p>
+
+    <div class="hierarchy">
+        <div class="hierarchy-level">
+            <div class="hierarchy-label">Outer</div>
+            <div class="hierarchy-items">
+                <div class="hierarchy-item accent">DP &times; 16</div>
+                <div class="hierarchy-item">replicas, sync via all-reduce</div>
+            </div>
+        </div>
+        <div class="hierarchy-level">
+            <div class="hierarchy-label">Middle</div>
+            <div class="hierarchy-items">
+                <div class="hierarchy-item accent">PP &times; 4</div>
+                <div class="hierarchy-item">layer stages, IB-friendly</div>
+            </div>
+        </div>
+        <div class="hierarchy-level">
+            <div class="hierarchy-label">Inner</div>
+            <div class="hierarchy-items">
+                <div class="hierarchy-item accent">TP &times; 8</div>
+                <div class="hierarchy-item accent">SP on</div>
+                <div class="hierarchy-item">NVSwitch-local</div>
+            </div>
+        </div>
+        <div class="hierarchy-level">
+            <div class="hierarchy-label">Optional</div>
+            <div class="hierarchy-items">
+                <div class="hierarchy-item">EP for MoE</div>
+                <div class="hierarchy-item">CP for &gt;1M ctx</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">Rule of thumb</div>
+        <p>Push TP as high as your NVLink/NVSwitch domain allows (8 inside a DGX). Use PP next, across nodes via InfiniBand. Fill out remaining GPUs with DP. Add EP only when you actually have experts; add CP only when you actually have long context. <em>Don't overcompose.</em></p>
+    </div>
+</section>
+
+<section class="slide" id="slide-05">
+    <div class="slide-number">05</div>
+    <h2>NeMo Aligner &mdash; RLHF, DPO, PPO</h2>
+    <p>Pretraining produces a base model that is fluent but unaligned: it will happily complete a request to write malware. <strong>Alignment</strong> &mdash; the post-training phase &mdash; turns a base model into an instruction-following assistant. NeMo Aligner is the toolbox.</p>
+
+    <h3>The standard pipeline</h3>
+    <div class="diagram-vertical">
+        <div class="diagram-box dim">Base pretrained model</div>
+        <span class="diagram-arrow">&darr;</span>
+        <div class="diagram-box accent">SFT &mdash; supervised fine-tune on instruction data</div>
+        <span class="diagram-arrow">&darr;</span>
+        <div class="diagram-box accent">Reward Model training (preference pairs)</div>
+        <span class="diagram-arrow">&darr;</span>
+        <div class="diagram-box accent">Policy Optimisation (PPO / DPO / RLOO / KTO / SteerLM)</div>
+        <span class="diagram-arrow">&darr;</span>
+        <div class="diagram-box dim">Aligned model ready for serving</div>
+    </div>
+
+    <h3>The methods (and when to pick which)</h3>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Method</th><th>Year</th><th>Needs</th><th>When to use</th></tr></thead>
+            <tbody>
+                <tr><td><strong>PPO</strong></td><td>2017 / RLHF 2022</td><td>Reward model + reference + policy + value head</td><td>Classic RLHF. Highest quality, most expensive (4 model copies).</td></tr>
+                <tr><td><strong>DPO</strong></td><td>Rafailov 2023</td><td>Preference pairs; <em>no</em> reward model</td><td>Simpler, cheaper. The default for most fine-tunes today.</td></tr>
+                <tr><td><strong>RLOO</strong></td><td>Ahmadian 2024</td><td>Reward model; no value head</td><td>Lighter than PPO, retains on-policy benefits.</td></tr>
+                <tr><td><strong>KTO</strong></td><td>Ethayarajh 2024</td><td>Single-rated samples (good / bad), no pairs</td><td>When you don't have curated A-vs-B preference pairs.</td></tr>
+                <tr><td><strong>IPO</strong></td><td>Azar 2023</td><td>Preference pairs</td><td>DPO with a more conservative regularisation; less prone to over-optimisation.</td></tr>
+                <tr><td><strong>SteerLM</strong></td><td>NVIDIA 2023</td><td>Multi-attribute labels</td><td>Conditional alignment &mdash; tune helpfulness, toxicity, verbosity at inference time.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Distributed architecture</h3>
+    <p>PPO-style training is the hard case: you need <strong>four</strong> model copies live simultaneously. Aligner places them on <em>separate</em> GPU groups and routes traffic between them:</p>
+    <ul>
+        <li><strong>Policy</strong> &mdash; the model being trained (full weights, gradients, optimiser).</li>
+        <li><strong>Reference</strong> &mdash; frozen copy of the SFT model; KL divergence anchor.</li>
+        <li><strong>Reward model</strong> &mdash; frozen scoring head (often a smaller model).</li>
+        <li><strong>Critic / value head</strong> &mdash; for advantage estimation in PPO (skipped in DPO/RLOO).</li>
+    </ul>
+    <p>Rollouts (the actual generation step that PPO depends on) are run via <strong>TensorRT-LLM</strong> for 5&ndash;10&times; throughput vs naive PyTorch generation. The reward model and reference live on dedicated GPU groups and are queried over NCCL.</p>
+
+    <h3>A DPO config</h3>
+    <div class="code-block">
+        <div class="code-header">conf/dpo_llama3_70b.yaml</div>
+        <pre><code><span class="kw">name</span>: dpo_llama3_70b
+<span class="kw">trainer</span>:
+  devices: <span class="num">8</span>
+  num_nodes: <span class="num">8</span>             <span class="cm"># 64 H100s</span>
+  max_steps: <span class="num">2000</span>
+  precision: bf16-mixed
+
+<span class="kw">model</span>:
+  pretrained_checkpoint: <span class="str">"/ckpt/llama3_70b_sft.nemo"</span>
+  ref_policy_checkpoint: <span class="str">"/ckpt/llama3_70b_sft.nemo"</span>
+  tensor_model_parallel_size: <span class="num">8</span>
+  pipeline_model_parallel_size: <span class="num">2</span>
+
+<span class="kw">dpo</span>:
+  beta: <span class="num">0.1</span>                  <span class="cm"># KL strength</span>
+  loss_type: sigmoid           <span class="cm"># or 'ipo' / 'rso'</span>
+  label_smoothing: <span class="num">0.0</span>
+  preference_average_log_probs: <span class="kw">true</span>
+
+<span class="kw">data</span>:
+  train_ds:
+    file_path: <span class="str">"/data/anthropic_hh_rlhf_pairs.jsonl"</span>
+    micro_batch_size: <span class="num">1</span>
+    global_batch_size: <span class="num">128</span>
+    max_seq_length: <span class="num">4096</span>
+  validation_ds:
+    file_path: <span class="str">"/data/hh_rlhf_val.jsonl"</span>
+
+<span class="kw">optim</span>:
+  name: distributed_fused_adam
+  lr: <span class="num">5.0e-7</span>
+  weight_decay: <span class="num">0.1</span>
+  sched:
+    name: CosineAnnealing
+    warmup_steps: <span class="num">50</span>
+</code></pre>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">Production reality</div>
+        <p>DPO has eaten most of the alignment-startup market because it's <em>much</em> simpler: no reward model, no rollouts, no value head &mdash; just a contrastive loss over preference pairs. PPO still wins on the very largest reasoning-heavy tasks. Aligner supports both behind one config knob.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-06">
+    <div class="slide-number">06</div>
+    <h2>NIM &mdash; One-Line Model Deployment</h2>
+    <p>Once you have a trained model, you need an endpoint. <strong>NIM</strong> (NVIDIA Inference Microservices) is NVIDIA's answer: a single Docker pull, a single port, and you have a production-ready, OpenAI-compatible inference server.</p>
+
+    <div class="code-block">
+        <div class="code-header">deploy a Llama-3.3-70B endpoint</div>
+        <pre><code><span class="cm"># That's it. No model build, no engine compile, no Triton config.</span>
+$ docker run --gpus all -p <span class="num">8000</span>:<span class="num">8000</span> \
+    nvcr.io/nim/meta/llama-3.3-70b-instruct:latest
+
+<span class="cm"># Talk to it like OpenAI:</span>
+$ curl http://localhost:8000/v1/chat/completions \
+    -H <span class="str">"Content-Type: application/json"</span> \
+    -d <span class="str">'{"model":"meta/llama-3.3-70b-instruct",
+         "messages":[{"role":"user","content":"hi"}]}'</span>
+</code></pre>
+    </div>
+
+    <h3>What's actually inside the container</h3>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>TensorRT-LLM engine</h4>
+            <p>Pre-built per GPU class (A100 / H100 / H200 / L40S / B200). On first launch, NIM detects the host GPU and pulls (or selects) the matching engine. Days of build time avoided.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Triton Inference Server</h4>
+            <p>Triton fronts the engine, exposing the OpenAI-compatible HTTP / gRPC API. Handles dynamic batching, KV-cache reuse, request queueing.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Observability hooks</h4>
+            <p>Prometheus <code>/metrics</code> endpoint with TTFT, TBT, queue depth, KV usage. OpenTelemetry traces propagate through to Triton internals.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Liveness / readiness probes</h4>
+            <p>Standard <code>/health/live</code> and <code>/health/ready</code> endpoints &mdash; autoscaler-friendly. Readiness only flips true once the engine has finished loading and warmup runs are complete.</p>
+        </div>
+    </div>
+
+    <h3>Three editions</h3>
+    <div class="diagram-grid cols-3">
+        <div class="diagram-panel accent-border">
+            <h4>NIM (on-prem)</h4>
+            <p>Pulled from <code>nvcr.io</code>; runs on your own DGX, RTX server, or workstation. Requires AI Enterprise licence for production use, free for dev/eval.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>NIM on cloud</h4>
+            <p>One-click deploy buttons on AWS Marketplace, Azure Marketplace, GCP Marketplace. Same container image; cloud handles billing through your usual provider.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>build.nvidia.com</h4>
+            <p>NVIDIA-hosted free tier for prototyping. Same OpenAI-compatible API, served from NVIDIA's own DGX Cloud. Great for sketching demos before sinking GPU spend.</p>
+        </div>
+    </div>
+
+    <h3>The catalog &mdash; ~100 models and growing</h3>
+    <ul>
+        <li><strong>LLMs:</strong> Llama-3.1, Llama-3.3, Mistral, Mixtral, Nemotron-70B, Phi-3, Gemma-2.</li>
+        <li><strong>Embeddings &amp; retrieval:</strong> NV-EmbedQA-Mistral-7B, Snowflake-Arctic-Embed, NV-Reranker.</li>
+        <li><strong>Speech:</strong> Riva Parakeet ASR, Riva FastPitch + HifiGAN TTS.</li>
+        <li><strong>Vision:</strong> NV-VLM-D, ChatRTX, Eye Contact, Background Blur, NeVA.</li>
+        <li><strong>Safety:</strong> NeMo Guardrails NIM (input / output / dialog rails as a service).</li>
+        <li><strong>Specialty:</strong> ColPali (document RAG), DiffDock-NIM (drug discovery), ESM-2, MolMIM.</li>
+    </ul>
+
+    <div class="callout">
+        <div class="callout-label">The trick</div>
+        <p>NIM hides the "which TensorRT-LLM engine binary, on which GPU, with which plugin set" matrix entirely. The same <code>docker pull</code> on a 4090 dev workstation, an L40S serving box, or a B200 cluster Just Works &mdash; the container picks the right engine at startup. That is the actual product value.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-07">
+    <div class="slide-number">07</div>
+    <h2>NIM Catalog &mdash; Beyond LLMs</h2>
+    <p>The Docker-pull pattern works for any TensorRT-optimisable model. NVIDIA has packaged enough of these into NIMs that the catalog now spans most of the production AI surface, not just chat.</p>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Text LLMs</h4>
+            <p>Llama-3.1 / 3.3 (8B / 70B / 405B), Mixtral 8&times;7B / 8&times;22B, Nemotron-70B-Instruct (NVIDIA's flagship aligned model), NeMo Megatron 530B reference, Phi-3-Mini, Gemma-7B.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Embeddings + reranking</h4>
+            <p>NV-EmbedQA-Mistral-7B-v2 (top of MTEB), NV-EmbedQA-E5-v5, Snowflake-Arctic-Embed-L, NV-Rerank-QA-Mistral-4B. Drop-in replacements for OpenAI <code>text-embedding-3</code> in your RAG stack.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>ASR (Riva)</h4>
+            <p>Parakeet RNN-T (English), Parakeet-TDT (multi-lingual streaming), Conformer-CTC. All exposed as gRPC / WebSocket streaming endpoints with diarisation hooks.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>TTS (Riva)</h4>
+            <p>FastPitch acoustic model + HifiGAN vocoder. Sub-50 ms first-audio-out on H100 for streaming. Voice cloning via fine-tuning. Multi-speaker, prosody-controllable.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Vision-Language</h4>
+            <p>NV-VLM-D (NVIDIA's multimodal), ChatRTX (local vision chat), NeVA (LLaVA-style), Llama-3.2-Vision NIM. Effects: Eye Contact (gaze redirection), Background Blur (segmentation NIM).</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>RAG building blocks</h4>
+            <p>NV-Reranker (cross-encoder), NV-Embed (bi-encoder), <strong>ColPali</strong> (document-image embeddings &mdash; retrieve PDFs by visual layout, not OCR text). Compose them into a multi-stage retrieval pipeline with one <code>docker compose</code>.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Digital biology &mdash; BioNeMo</h4>
+            <p><strong>DiffDock-NIM</strong> (protein-ligand docking), <strong>ESM-2 NIM</strong> (protein language model embeddings), <strong>MolMIM</strong> (molecular generation). Same Docker-pull pattern; abstracts away build-and-tune for non-LLM scientific models.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Code &amp; agents</h4>
+            <p>Llama-3.1-Nemotron-70B-Reward (judge model), code-Llama variants, Nemotron-4-340B-Reward. Increasingly used as agent-evaluators inside larger pipelines.</p>
+        </div>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">Strategic point</div>
+        <p>The same Docker-pull pattern reused across modalities is what makes NIM a <em>platform</em>, not just a model server. A drug-discovery team and a chatbot team end up running the same kind of Kubernetes pods, with the same Prometheus dashboards, the same Triton-level batching, and the same AI Enterprise support contract &mdash; despite using radically different models underneath.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-08">
+    <div class="slide-number">08</div>
+    <h2>NeMo Guardrails &mdash; Safety on Rails</h2>
+    <p>An LLM endpoint is dangerous by default: it'll happily reveal system prompts, follow injections, leak training data, or call tools it shouldn't. <strong>NeMo Guardrails</strong> is the runtime-safety layer that wraps any LLM endpoint &mdash; OpenAI, Anthropic, an in-house NIM &mdash; with policy.</p>
+
+    <h3>Four kinds of rail</h3>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Input rails</h4>
+            <p>Run before the LLM call. Block off-topic prompts, jailbreak attempts, prompt-injection signatures, PII in the user's input. Can short-circuit and return a canned refusal without ever invoking the LLM.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Dialog rails</h4>
+            <p>Multi-turn flow control. "If the user asks for medical advice, route to a disclaimer flow first." Implemented as Colang flow definitions; compiles to a state machine.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Execution rails</h4>
+            <p>Tool-use restrictions: which functions can the LLM actually call, with which argument schemas, with which RBAC. Regex-validated arguments before <code>fn(...)</code> ever fires.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Output rails</h4>
+            <p>Run after the LLM has produced a draft. Filter unsafe content, hallucinated facts (cross-check against retrieval), or PII leaks. Optionally re-prompt the LLM to fix the violation.</p>
+        </div>
+    </div>
+
+    <h3>How it actually enforces</h3>
+    <ul>
+        <li><strong>Small classifier models</strong> for jailbreak / off-topic detection (run as their own NIM).</li>
+        <li><strong>Regex + RBAC</strong> for tool-call argument validation.</li>
+        <li><strong>Fact-check rails</strong> compare the answer back against retrieved sources; flag hallucinations.</li>
+        <li><strong>LLM-as-judge</strong> rails (a smaller LLM grades the bigger one's output) for harder semantic checks.</li>
+        <li>Everything is fronted by <strong>Colang</strong> &mdash; a small DSL where flows look like a cross between Markdown and Python.</li>
+    </ul>
+
+    <div class="code-block">
+        <div class="code-header">policies/banking_assistant.co</div>
+        <pre><code><span class="cm"># --- canonical user intents ---</span>
+<span class="kw">define user</span> ask_balance
+  <span class="str">"what's my balance"</span>
+  <span class="str">"how much money do I have"</span>
+  <span class="str">"current account total"</span>
+
+<span class="kw">define user</span> ask_for_legal_advice
+  <span class="str">"is this contract legal"</span>
+  <span class="str">"am I being sued"</span>
+
+<span class="kw">define user</span> attempt_jailbreak
+  <span class="str">"ignore previous instructions"</span>
+  <span class="str">"act as a different model"</span>
+
+<span class="cm"># --- bot responses ---</span>
+<span class="kw">define bot</span> refuse_legal
+  <span class="str">"I can't give legal advice. Please consult a qualified solicitor."</span>
+
+<span class="kw">define bot</span> refuse_jailbreak
+  <span class="str">"I'm here to help with your banking. Let's stick to that."</span>
+
+<span class="cm"># --- flows (input rails) ---</span>
+<span class="kw">define flow</span> handle_legal
+  user ask_for_legal_advice
+  bot refuse_legal
+
+<span class="kw">define flow</span> handle_jailbreak
+  user attempt_jailbreak
+  bot refuse_jailbreak
+
+<span class="cm"># --- flows (execution rails) ---</span>
+<span class="kw">define flow</span> handle_balance
+  user ask_balance
+  $auth = <span class="fn">execute</span> verify_session_jwt
+  <span class="kw">if</span> not $auth.valid
+    bot <span class="str">"Please re-authenticate."</span>
+    <span class="kw">stop</span>
+  $bal = <span class="fn">execute</span> get_balance(account_id=$auth.account_id)
+  bot <span class="str">"Your balance is "</span> + $bal
+</code></pre>
+    </div>
+
+    <p>Guardrails ships as both an open-source Python library (<code>pip install nemoguardrails</code>) and as a packaged NIM &mdash; the latter is appropriate when you want guardrails enforced for traffic that doesn't go through your application code (e.g. as a sidecar for a third-party endpoint).</p>
+
+    <div class="callout">
+        <div class="callout-label">Composability</div>
+        <p>Guardrails is <em>LLM-agnostic</em>. The same Colang policy can be pointed at a NIM-hosted Llama, an OpenAI GPT-4o endpoint, an Anthropic Claude endpoint, or a local Ollama instance. That's deliberate &mdash; NVIDIA wants to be the safety layer regardless of whose model you actually use.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-09">
+    <div class="slide-number">09</div>
+    <h2>Base Command &mdash; Cluster Orchestration</h2>
+    <p>Slurm is the de-facto HPC scheduler &mdash; but it's a 2000s-era tool with a 1990s UX. <strong>Base Command</strong> is NVIDIA's commercial replacement: a web UI plus CLI that handles queueing, dataset management, MIG-aware scheduling, and integrated dashboards on top of the underlying Slurm or Kubernetes cluster.</p>
+
+    <h3>What Base Command actually provides</h3>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Queue management</h4>
+            <p>Submit, monitor, cancel jobs from a browser. Multi-tenant fair-share with per-team GPU-hour budgets; configurable preemption policy; integrated with LDAP / SAML for auth.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Job templates</h4>
+            <p>Pre-configured presets for NeMo pretrain, NeMo SFT, Aligner DPO, and inference benchmarks. Pick a model size + GPU count, click submit. Sane defaults that stop you from misconfiguring TP / PP at 3 AM.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Checkpoint &amp; dataset registries</h4>
+            <p>Versioned object-store buckets for dataset and checkpoint artefacts. <code>bcprun</code> jobs reference them by name; provenance is tracked. Integrates with Lustre / GPFS / S3-compatible.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>MIG-aware scheduling</h4>
+            <p>Jobs declare their GPU-slice requirement (e.g. <code>1g.10gb</code>); scheduler allocates the right MIG profile, reconfigures GPUs as needed, and tears down between job classes.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Integrated dashboards</h4>
+            <p>Live GPU utilisation, NVLink traffic, IB bandwidth, KV usage, and per-job throughput &mdash; all wired up by default. No need to stand up a separate Grafana stack.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Ships with the driver</h4>
+            <p>Bundled with the AI Enterprise driver / CUDA matrix &mdash; you don't separately install or upgrade it. Tight version coupling is the point.</p>
+        </div>
+    </div>
+
+    <h3>Where it sits</h3>
+    <div class="diagram-vertical">
+        <div class="diagram-box">User &mdash; Web UI / CLI / Python SDK</div>
+        <span class="diagram-arrow">&darr;</span>
+        <div class="diagram-box accent">Base Command</div>
+        <span class="diagram-arrow">&darr;</span>
+        <div class="diagram-box dim">Slurm or Kubernetes (driver included)</div>
+        <span class="diagram-arrow">&darr;</span>
+        <div class="diagram-box dim">DGX / DGX SuperPOD / DGX Cloud</div>
+    </div>
+
+    <h3>Used at NVIDIA itself</h3>
+    <p>NVIDIA's internal R&amp;D clusters &mdash; the ones they used to train Nemotron and pre-release Llama partners &mdash; run Base Command. <strong>DGX Cloud</strong> (NVIDIA-managed bare-metal DGX clusters on OCI / Azure / GCP) ships with Base Command pre-installed: that's how external customers get the same experience.</p>
+
+    <h3>Alternatives in the wild</h3>
+    <ul>
+        <li><strong>Vanilla Slurm + Bash</strong> &mdash; what most academic clusters still run. Free, ubiquitous, painful UX.</li>
+        <li><strong>Kubernetes + Run.ai</strong> &mdash; NVIDIA <em>acquired Run.ai in late 2024</em>. Run.ai is a K8s-native scheduler with workspace UI, fair-share, MIG-aware allocation. Increasingly fronts Base Command-like deployments on K8s clusters.</li>
+        <li><strong>Volcano / Kueue</strong> &mdash; the open-source K8s job-batch ecosystem. No NVIDIA-specific niceties.</li>
+        <li><strong>Ray Cluster</strong> &mdash; popular for ML workflows, weaker for true HPC scheduling.</li>
+    </ul>
+
+    <div class="callout">
+        <div class="callout-label">Why the Run.ai acquisition matters</div>
+        <p>NVIDIA's bet: Slurm-shop customers stay on Slurm, but every <em>new</em> AI cluster being built is on Kubernetes. Run.ai is the K8s scheduling layer they bought to make sure the AI Enterprise UX (workspaces, fair-share, MIG, dashboards) works identically on K8s as it does on Slurm. Expect Run.ai and Base Command to converge over the next two years.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-10">
+    <div class="slide-number">10</div>
+    <h2>NGC, AI Enterprise, DGX Cloud &mdash; How These Connect</h2>
+    <p>Three NVIDIA brand names get confused all the time. They are not the same thing.</p>
+
+    <div class="diagram-grid cols-3">
+        <div class="diagram-panel accent-border">
+            <h4>NGC catalog</h4>
+            <p><strong>The registry.</strong> A free public catalog of NVIDIA-validated containers, models, and Helm charts. PyTorch, TensorFlow, NeMo, Triton, NIM, RAPIDS, Modulus, BioNeMo &mdash; all live in <code>nvcr.io</code>. Pull anonymously for personal / dev; log in with an NGC API key for protected images.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>NVIDIA AI Enterprise</h4>
+            <p><strong>The licence.</strong> A commercial software bundle: <em>NeMo + NIM + Triton + Base Command + Riva + RAPIDS + Run.ai + vGPU</em>. Per-GPU-per-year subscription (~$4,500 list, OEM-discounted). Buys you support SLAs, validated stacks, security patches, and certified host-OS compatibility.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>DGX Cloud</h4>
+            <p><strong>The hosted offering.</strong> Managed bare-metal DGX clusters on Oracle Cloud, Azure, and GCP. Comes with AI Enterprise pre-installed and Base Command as the front-end. Pay hourly for short jobs or reserve for long pretrains. NVIDIA handles the hardware; you bring the workload.</p>
+        </div>
+    </div>
+
+    <h3>How they fit together</h3>
+    <div class="diagram-vertical">
+        <div class="diagram-box dim">NGC catalog &mdash; <em>where containers live</em></div>
+        <span class="diagram-arrow">&darr;</span>
+        <div class="diagram-box accent">AI Enterprise licence &mdash; <em>what you pay for support on those containers</em></div>
+        <span class="diagram-arrow">&darr;</span>
+        <div class="diagram-box accent">DGX Cloud &mdash; <em>NVIDIA-hosted infra running both</em></div>
+        <span class="diagram-arrow">&darr;</span>
+        <div class="diagram-box accent">Base Command + Run.ai &mdash; <em>scheduling layer on top</em></div>
+    </div>
+
+    <h3>The buying decision</h3>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>You are&hellip;</th><th>You probably want&hellip;</th><th>Why</th></tr></thead>
+            <tbody>
+                <tr><td>An individual / hobbyist</td><td>NGC pulls only</td><td>Free; the open-source containers do everything you need for dev.</td></tr>
+                <tr><td>A startup, &lt; 50 GPUs on-prem</td><td>NGC + selective NIM trials</td><td>Use the free build.nvidia.com NIM tier; only buy AI Enterprise when production support is mandatory.</td></tr>
+                <tr><td>An enterprise with on-prem DGX</td><td>NGC + AI Enterprise + Base Command</td><td>SLAs and patch cadence justify the per-GPU licence. Base Command bundled.</td></tr>
+                <tr><td>An enterprise wanting elastic scale</td><td>DGX Cloud (incl. AI Enterprise)</td><td>You pay per GPU-hour; NVIDIA handles cluster ops. Burst-friendly.</td></tr>
+                <tr><td>A hyperscaler customer</td><td>NIM via AWS / Azure / GCP marketplace</td><td>One-click deploy on an existing cloud account; NIM billing rolls into your hyperscaler invoice.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">The Run.ai inflection</div>
+        <p>Since the late-2024 Run.ai acquisition, the K8s scheduling story has consolidated under NVIDIA. Expect the AI Enterprise SKU to increasingly include "Run.ai workspaces" as a first-class feature for Kubernetes shops &mdash; mirroring what Base Command provides on Slurm. The two will likely share a UI by 2027.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-11">
+    <div class="slide-number">11</div>
+    <h2>Interactive: NVIDIA AI Stack Builder</h2>
+    <p>Pick your goal, team size, and infrastructure. The builder recommends which NeMo modules and NIM containers to use, whether AI Enterprise is needed, and prints a 3-line stack recipe.</p>
+
+    <div class="control-panel">
+        <div class="control-row">
+            <label for="sb-goal">Goal</label>
+            <select id="sb-goal">
+                <option value="pretrain">Pretrain a frontier model</option>
+                <option value="finetune" selected>Fine-tune Llama-70B on company data</option>
+                <option value="rag">Build a RAG service</option>
+                <option value="chatbot">Deploy a chatbot</option>
+                <option value="edge">Edge inference</option>
+                <option value="robotics">Robotics / multimodal</option>
+            </select>
+        </div>
+        <div class="control-row">
+            <label for="sb-team">Team size</label>
+            <select id="sb-team">
+                <option value="1">1 (solo)</option>
+                <option value="5" selected>5 (small team)</option>
+                <option value="25">25 (department)</option>
+                <option value="100">100+ (enterprise)</option>
+            </select>
+        </div>
+        <div class="control-row">
+            <label for="sb-infra">Infrastructure</label>
+            <select id="sb-infra">
+                <option value="cloud">Public cloud (AWS / Azure / GCP)</option>
+                <option value="onprem-dgx" selected>On-prem DGX cluster</option>
+                <option value="diy">DIY GPU servers</option>
+                <option value="edge">Edge / Jetson</option>
+                <option value="dgx-cloud">DGX Cloud (NVIDIA-hosted)</option>
+            </select>
+        </div>
+
+        <div class="metric-grid">
+            <div class="metric"><div class="metric-label">AI Enterprise</div><div class="metric-value" id="sb-aie">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">Base Command</div><div class="metric-value" id="sb-bcm">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">Licence band</div><div class="metric-value" id="sb-lic">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">Infra band</div><div class="metric-value" id="sb-inf">&mdash;</div></div>
+        </div>
+
+        <div id="sb-out" class="result-box"></div>
+    </div>
+
+    <script>
+    (function(){
+        const goalEl = document.getElementById('sb-goal');
+        const teamEl = document.getElementById('sb-team');
+        const infraEl = document.getElementById('sb-infra');
+
+        function rec(){
+            const goal = goalEl.value;
+            const team = parseInt(teamEl.value, 10);
+            const infra = infraEl.value;
+
+            // NeMo modules
+            const nemo = [];
+            const nim = [];
+            let aie = 'Optional';
+            let bcm = 'No';
+            let licBand = '$0 / yr';
+            let infBand = 'low';
+            let recipe = [];
+
+            if (goal === 'pretrain') {
+                nemo.push('Curator', 'Framework (Megatron-LM)', 'Aligner');
+                nim.push('TRT-LLM build pipeline', 'Eval NIM');
+                aie = 'Required';
+                bcm = 'Yes';
+                licBand = '$$$ ($500K+ / yr at 100+ GPUs)';
+                infBand = 'very high (DGX SuperPOD)';
+                recipe = [
+                    'Curate trillion-token corpus with NeMo Curator on a Dask+Ray cluster.',
+                    'Pretrain on DGX SuperPOD with NeMo Framework: TP=8, PP=4, DP=N, FP8.',
+                    'Align with NeMo Aligner (SFT &rarr; DPO), quantize via TRT-LLM, deploy as NIM.'
+                ];
+            } else if (goal === 'finetune') {
+                nemo.push('Framework (LoRA / SFT)', 'Aligner (DPO)');
+                nim.push('Llama-3.3-70B-Instruct NIM (base)', 'Custom-fine-tuned NIM');
+                aie = team >= 25 ? 'Required' : 'Recommended';
+                bcm = team >= 25 ? 'Yes' : 'Optional';
+                licBand = team >= 25 ? '$$ (~$200K / yr at 50 GPUs)' : '$ (~$50K / yr at 8-16 GPUs)';
+                infBand = 'medium (8-32 H100s)';
+                recipe = [
+                    'SFT Llama-3-70B on company data with NeMo Framework on 8-32 H100s.',
+                    'DPO-align with NeMo Aligner against curated preference pairs.',
+                    'Quantize FP8 with TRT-LLM, deploy behind NIM with Guardrails sidecar.'
+                ];
+            } else if (goal === 'rag') {
+                nemo.push('Guardrails');
+                nim.push('NV-EmbedQA-Mistral-7B', 'NV-Reranker', 'Llama-3.3-70B NIM', 'Guardrails NIM');
+                aie = team >= 25 ? 'Recommended' : 'Optional';
+                bcm = 'No';
+                licBand = team >= 25 ? '$ (~$50K / yr)' : '$0 (build.nvidia.com tier)';
+                infBand = 'low-medium (1-4 L40S or H100)';
+                recipe = [
+                    'Embed corpus with NV-EmbedQA-Mistral NIM into a vector store (Milvus/pgvector).',
+                    'Rerank top-K with NV-Reranker NIM, generate with Llama-3.3-70B NIM.',
+                    'Wrap with NeMo Guardrails NIM for input/output safety + fact-check rails.'
+                ];
+            } else if (goal === 'chatbot') {
+                nemo.push('Guardrails');
+                nim.push('Llama-3.3-70B-Instruct NIM', 'Guardrails NIM');
+                aie = team >= 100 ? 'Required' : 'Optional';
+                bcm = 'No';
+                licBand = team >= 100 ? '$$' : (team >= 25 ? '$' : '$0 (free tier)');
+                infBand = 'low (1-2 H100 or L40S)';
+                recipe = [
+                    'Pull a Llama-3.3-70B-Instruct NIM; expose OpenAI-compatible endpoint.',
+                    'Front with NeMo Guardrails (input + output rails, jailbreak filter).',
+                    'Autoscale on K8s using Triton liveness probes; observe via Prometheus.'
+                ];
+            } else if (goal === 'edge') {
+                nemo.push('Framework (distillation, optional)');
+                nim.push('Riva ASR/TTS (Jetson)', 'Small LLM NIM (Phi-3 / Gemma-2B)');
+                aie = 'Optional (Jetson Studio licence covers most)';
+                bcm = 'No';
+                licBand = '$ (Jetson developer + select NIMs)';
+                infBand = 'tiny (Jetson Orin / Thor)';
+                recipe = [
+                    'Distill or quantise the model (INT4 AWQ) with TRT-LLM for Jetson.',
+                    'Package as a NIM-compatible container; deploy directly to Orin / Thor.',
+                    'Pair with Riva ASR/TTS NIMs for full voice loop.'
+                ];
+            } else if (goal === 'robotics') {
+                nemo.push('Framework (vision-language)', 'Curator (multimodal)');
+                nim.push('NV-VLM-D', 'Riva ASR/TTS', 'Isaac perception NIMs');
+                aie = team >= 25 ? 'Recommended' : 'Optional';
+                bcm = team >= 25 ? 'Yes' : 'No';
+                licBand = team >= 25 ? '$$' : '$';
+                infBand = 'medium (mix of A100/H100 train + Jetson deploy)';
+                recipe = [
+                    'Train multimodal VLM with NeMo Framework + Curator-blended image-text data.',
+                    'Validate on DGX, distill to Jetson-sized model with TRT-LLM.',
+                    'Deploy as NIM on Thor; orchestrate sensors via Isaac perception NIMs.'
+                ];
+            }
+
+            // Infrastructure overrides
+            if (infra === 'dgx-cloud') {
+                aie = 'Included with DGX Cloud';
+                bcm = 'Included';
+                infBand += ' (rented hourly)';
+            } else if (infra === 'cloud') {
+                bcm = bcm === 'No' ? 'No' : 'via Run.ai on K8s';
+            } else if (infra === 'diy') {
+                aie = aie === 'Required' ? '<span class="badge warn">Required but consumer GPUs ineligible</span>' : aie;
+                bcm = 'No (use vanilla Slurm)';
+            } else if (infra === 'edge') {
+                aie = 'Jetson licence';
+                bcm = 'No';
+            } else if (infra === 'onprem-dgx') {
+                bcm = bcm === 'No' ? 'Recommended' : bcm;
+            }
+
+            document.getElementById('sb-aie').innerHTML = aie;
+            document.getElementById('sb-bcm').innerHTML = bcm;
+            document.getElementById('sb-lic').textContent = licBand;
+            document.getElementById('sb-inf').textContent = infBand;
+
+            const nemoStr = nemo.length ? nemo.map(n => 'NeMo ' + n).join(', ') : '(none)';
+            const nimStr  = nim.length  ? nim.join(', ') : '(none)';
+
+            document.getElementById('sb-out').innerHTML =
+                '<div><span class="line-label">NeMo modules</span> &rarr; <span class="line-val">' + nemoStr + '</span></div>' +
+                '<div><span class="line-label">NIM containers</span> &rarr; <span class="line-val">' + nimStr + '</span></div>' +
+                '<div style="margin-top:0.6rem;color:var(--text-secondary);">Recipe:<br>' +
+                recipe.map((r,i) => '<span class="line-val">' + (i+1) + '.</span> ' + r).join('<br>') +
+                '</div>';
+        }
+
+        [goalEl, teamEl, infraEl].forEach(el => el.addEventListener('change', rec));
+        rec();
+    })();
+    </script>
+
+    <div class="callout">
+        <div class="callout-label">A real-world example output</div>
+        <p>Goal = "Fine-tune Llama-70B", team = 25, infra = on-prem DGX &rarr; <em>DGX H100 SuperPOD + NeMo Megatron for SFT &rarr; NeMo Aligner for DPO &rarr; quantize via TRT-LLM &rarr; deploy as NIM behind Triton; AI Enterprise required for support, Base Command bundled.</em></p>
+    </div>
+</section>
+
+<!-- ════════════════════════════════════ Footer ════════════════════════════════════ -->
+<footer class="footer">
+    <p>Part of the <a href="https://github.com/BrendanJamesLynskey/LLMs#nvidia-gpu-architectures">NVIDIA GPU Architectures Series</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;"><a href="https://github.com/BrendanJamesLynskey/LLMs#nvidia-gpu-architectures">Back to Series Index</a></p>
+</footer>
+
+<script>
+    // Smooth scroll for TOC links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    // Subtle fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.slide').forEach(slide => {
+        slide.style.opacity = '0';
+        slide.style.transform = 'translateY(30px)';
+        slide.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(slide);
+    });
+</script>
+
+</body>
+</html>
