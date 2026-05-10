@@ -1245,7 +1245,7 @@ $ curl http://localhost:8000/v1/chat/completions \
         <li><strong>LLMs:</strong> Llama-3.1, Llama-3.3, Mistral, Mixtral, Nemotron-70B, Phi-3, Gemma-2.</li>
         <li><strong>Embeddings &amp; retrieval:</strong> NV-EmbedQA-Mistral-7B, Snowflake-Arctic-Embed, NV-Reranker.</li>
         <li><strong>Speech:</strong> Riva Parakeet ASR, Riva FastPitch + HifiGAN TTS.</li>
-        <li><strong>Vision:</strong> NV-VLM-D, ChatRTX, Eye Contact, Background Blur, NeVA.</li>
+        <li><strong>Vision:</strong> NVLM-D, ChatRTX, Eye Contact, Background Blur, NeVA.</li>
         <li><strong>Safety:</strong> NeMo Guardrails NIM (input / output / dialog rails as a service).</li>
         <li><strong>Specialty:</strong> ColPali (document RAG), DiffDock-NIM (drug discovery), ESM-2, MolMIM.</li>
     </ul>
@@ -1264,7 +1264,7 @@ $ curl http://localhost:8000/v1/chat/completions \
     <div class="diagram-grid cols-2">
         <div class="diagram-panel accent-border">
             <h4>Text LLMs</h4>
-            <p>Llama-3.1 / 3.3 (8B / 70B / 405B), Mixtral 8&times;7B / 8&times;22B, Nemotron-70B-Instruct (NVIDIA's flagship aligned model), NeMo Megatron 530B reference, Phi-3-Mini, Gemma-7B.</p>
+            <p>Llama-3.1 / 3.3 (8B / 70B / 405B), Mixtral 8&times;7B / 8&times;22B, Nemotron-70B-Instruct (NVIDIA's flagship aligned model), Nemotron-4-340B, Phi-3-Mini, Gemma-7B.</p>
         </div>
         <div class="diagram-panel accent-border">
             <h4>Embeddings + reranking</h4>
@@ -1280,7 +1280,7 @@ $ curl http://localhost:8000/v1/chat/completions \
         </div>
         <div class="diagram-panel accent-border">
             <h4>Vision-Language</h4>
-            <p>NV-VLM-D (NVIDIA's multimodal), ChatRTX (local vision chat), NeVA (LLaVA-style), Llama-3.2-Vision NIM. Effects: Eye Contact (gaze redirection), Background Blur (segmentation NIM).</p>
+            <p>NVLM-D (NVIDIA's multimodal), ChatRTX (local vision chat), NeVA (LLaVA-style), Llama-3.2-Vision NIM. Effects: Eye Contact (gaze redirection), Background Blur (segmentation NIM).</p>
         </div>
         <div class="diagram-panel accent-border">
             <h4>RAG building blocks</h4>
@@ -1629,7 +1629,7 @@ $ curl http://localhost:8000/v1/chat/completions \
                 ];
             } else if (goal === 'robotics') {
                 nemo.push('Framework (vision-language)', 'Curator (multimodal)');
-                nim.push('NV-VLM-D', 'Riva ASR/TTS', 'Isaac perception NIMs');
+                nim.push('NVLM-D', 'Riva ASR/TTS', 'Isaac perception NIMs');
                 aie = team >= 25 ? 'Recommended' : 'Optional';
                 bcm = team >= 25 ? 'Yes' : 'No';
                 licBand = team >= 25 ? '$$' : '$';
